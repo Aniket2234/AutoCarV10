@@ -4409,7 +4409,10 @@ export async function registerRoutes(app: Express): Promise<Server> {
       const customer = serviceVisit.customerId as any;
       const serviceVehicle = await RegistrationVehicle.findOne({ 
         customerId: customer._id.toString(),
-        vehicleNumber: serviceVisit.vehicleReg
+        $or: [
+          { vehicleId: serviceVisit.vehicleReg },
+          { vehicleNumber: serviceVisit.vehicleReg }
+        ]
       }).lean() as any;
       
       if (!serviceVehicle) {
