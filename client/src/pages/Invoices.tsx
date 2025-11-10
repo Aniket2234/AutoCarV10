@@ -18,8 +18,24 @@ import { PaymentRecordingDialog } from "@/components/PaymentRecordingDialog";
 interface Invoice {
   _id: string;
   invoiceNumber: string;
-  customerName: string;
+  customerName?: string;
   customerId: { fullName: string; mobileNumber: string; email: string };
+  customerDetails?: {
+    fullName: string;
+    mobileNumber: string;
+    email?: string;
+    referenceCode?: string;
+    address?: string;
+  };
+  vehicleDetails?: Array<{
+    vehicleId?: string;
+    vehicleNumber?: string;
+    vehicleBrand?: string;
+    vehicleModel?: string;
+    customModel?: string;
+    variant?: string;
+    color?: string;
+  }>;
   subtotal: number;
   discountAmount: number;
   taxAmount: number;
