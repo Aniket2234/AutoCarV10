@@ -222,43 +222,6 @@ export default function Products() {
     });
   };
 
-  const handleBarcodeImageUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0];
-    if (file) {
-      if (!file.type.startsWith('image/')) {
-        toast({
-          title: "Invalid File",
-          description: "Please upload an image file",
-          variant: "destructive",
-        });
-        return;
-      }
-
-      toast({
-        title: "Uploading Barcode Image",
-        description: "Processing your barcode image...",
-      });
-
-      const reader = new FileReader();
-      reader.onload = (event) => {
-        const base64Image = event.target?.result as string;
-        setFormData({ ...formData, barcode: base64Image });
-        toast({
-          title: "Success",
-          description: "Barcode image uploaded successfully",
-        });
-      };
-      reader.onerror = () => {
-        toast({
-          title: "Upload Failed",
-          description: "Failed to read the image file",
-          variant: "destructive",
-        });
-      };
-      reader.readAsDataURL(file);
-    }
-  };
-
   const addImage = () => {
     setFormData({ ...formData, images: [...formData.images, ""] });
   };
@@ -631,53 +594,15 @@ export default function Products() {
         </div>
         <div className="space-y-2">
           <Label htmlFor="barcode">Barcode/QR Code</Label>
-          <div className="space-y-2">
-            <div className="relative">
-              <Barcode className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
-              <Input
-                id="barcode"
-                value={formData.barcode}
-                onChange={(e) => setFormData({ ...formData, barcode: e.target.value })}
-                className="pl-10"
-                placeholder="Enter barcode text or upload an image"
-                data-testid="input-product-barcode"
-              />
-            </div>
-            <div className="flex gap-2 items-center">
-              <Input
-                type="file"
-                accept="image/*"
-                onChange={handleBarcodeImageUpload}
-                className="hidden"
-                id="barcode-image-upload"
-                data-testid="input-barcode-image"
-              />
-              <Button
-                type="button"
-                variant="outline"
-                size="sm"
-                onClick={() => document.getElementById('barcode-image-upload')?.click()}
-                data-testid="button-upload-barcode"
-              >
-                <ImagePlus className="h-4 w-4 mr-2" />
-                Upload Barcode Image
-              </Button>
-              {formData.barcode && formData.barcode.startsWith('data:image') && (
-                <div className="flex items-center gap-2 text-sm text-muted-foreground">
-                  <ImageIcon className="h-4 w-4" />
-                  <span>Image uploaded</span>
-                  <Button
-                    type="button"
-                    variant="ghost"
-                    size="sm"
-                    onClick={() => setFormData({ ...formData, barcode: "" })}
-                    data-testid="button-clear-barcode"
-                  >
-                    <X className="h-4 w-4" />
-                  </Button>
-                </div>
-              )}
-            </div>
+          <div className="relative">
+            <Barcode className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
+            <Input
+              id="barcode"
+              value={formData.barcode}
+              onChange={(e) => setFormData({ ...formData, barcode: e.target.value })}
+              className="pl-10"
+              data-testid="input-product-barcode"
+            />
           </div>
         </div>
       </div>
