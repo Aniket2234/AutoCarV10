@@ -47,7 +47,7 @@ const customerFormSchema = z.object({
   fullName: z.string().min(1, "Name is required"),
   mobileNumber: z.string().min(10, "Mobile number must be at least 10 digits"),
   alternativeNumber: z.string().optional(),
-  email: z.string().email("Invalid email address").optional().or(z.literal("")),
+  email: z.union([z.string().email("Invalid email address"), z.literal("")]),
   address: z.string().min(1, "Address is required"),
   city: z.string().min(1, "City is required"),
   taluka: z.string().min(1, "Taluka is required"),
