@@ -1312,45 +1312,118 @@ export default function CustomerRegistration() {
                           <div className="mb-4">
                             <FormLabel className="text-base">Parts Needed for Service/Replacement</FormLabel>
                             <p className="text-sm text-gray-500 dark:text-gray-400 mt-1">
-                              Select parts needed for this vehicle
+                              Select parts and quantities needed for this vehicle
                             </p>
                           </div>
-                          <div className="grid grid-cols-2 md:grid-cols-3 gap-2 max-h-96 overflow-y-auto border rounded-lg p-4">
-                            {availableParts.map((part) => (
-                              <FormField
-                                key={part.id}
-                                control={vehicleForm.control}
-                                name="selectedParts"
-                                render={({ field }) => {
-                                  const isSelected = field.value?.includes(part.id);
-                                  const hasWarrantyCard = vehicleForm.watch("warrantyCards")?.some(wc => wc.partId === part.id);
+                          <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
+                            {/* Products Grid - Left Side */}
+                            <div className="lg:col-span-2">
+                              <div className="grid grid-cols-2 gap-2 max-h-[500px] overflow-y-auto border rounded-lg p-3 bg-muted/20">
+                                {availableParts.map((part) => {
+                                  const selectedPartIds = vehicleForm.watch("selectedParts") || [];
+                                  const isInCart = selectedPartIds.includes(part.id);
+                                  
                                   return (
-                                    <FormItem
-                                      key={part.id}
-                                      className="flex items-center space-x-2 p-2 border rounded-md bg-muted/30"
-                                    >
-                                      <FormControl>
-                                        <Checkbox
-                                          checked={isSelected}
-                                          onCheckedChange={(checked) => {
-                                            if (checked) {
-                                              field.onChange([...field.value, part.id]);
-                                            } else {
-                                              field.onChange(field.value?.filter((value) => value !== part.id));
-                                              removeWarrantyCard(part.id);
-                                            }
-                                          }}
-                                          data-testid={`checkbox-part-${part.id}`}
-                                        />
-                                      </FormControl>
-                                      <FormLabel className="text-xs font-normal cursor-pointer flex-1 leading-tight">
-                                        {part.name}
-                                      </FormLabel>
-                                    </FormItem>
+                                    <Card key={part.id} className="hover-elevate">
+                                      <CardContent className="p-3">
+                                        <div className="flex flex-col gap-2">
+                                          <div className="flex-1">
+                                            <p className="text-sm font-medium line-clamp-2">{part.name}</p>
+                                            <p className="text-xs text-muted-foreground">{part.category}</p>
+                                          </div>
+                                          {!isInCart ? (
+                                            <Button
+                                              type="button"
+                                              size="sm"
+                                              variant="outline"
+                                              className="w-full"
+                                              onClick={() => {
+                                                const currentParts = vehicleForm.getValues("selectedParts") || [];
+                                                vehicleForm.setValue("selectedParts", [...currentParts, part.id]);
+                                              }}
+                                              data-testid={`button-add-${part.id}`}
+                                            >
+                                              Add
+                                            </Button>
+                                          ) : (
+                                            <div className="flex items-center gap-1 border rounded-md">
+                                              <Button
+                                                type="button"
+                                                size="icon"
+                                                variant="ghost"
+                                                className="h-7 w-7"
+                                                onClick={() => {
+                                                  const currentParts = vehicleForm.getValues("selectedParts") || [];
+                                                  vehicleForm.setValue("selectedParts", currentParts.filter(id => id !== part.id));
+                                                  removeWarrantyCard(part.id);
+                                                }}
+                                                data-testid={`button-remove-${part.id}`}
+                                              >
+                                                -
+                                              </Button>
+                                              <span className="flex-1 text-center text-sm font-semibold">Added</span>
+                                              <div className="w-7"></div>
+                                            </div>
+                                          )}
+                                        </div>
+                                      </CardContent>
+                                    </Card>
                                   );
-                                }}
-                              />
-                            ))}
+                                })}
+                              </div>
+                            </div>
+
+                            {/* Cart - Right Side */}
+                            <div className="lg:col-span-1">
+                              <Card className="sticky top-4">
+                                <CardHeader className="pb-3">
+                                  <CardTitle className="text-base flex items-center gap-2">
+                                    <span>Selected Parts</span>
+                                    <span className="text-sm font-normal text-muted-foreground">
+                                      ({vehicleForm.watch("selectedParts")?.length || 0})
+                                    </span>
+                                  </CardTitle>
+                                </CardHeader>
+                                <CardContent className="p-3">
+                                  <div className="max-h-[400px] overflow-y-auto space-y-2">
+                                    {vehicleForm.watch("selectedParts")?.length > 0 ? (
+                                      vehicleForm.watch("selectedParts").map((partId) => {
+                                        const part = availableParts.find(p => p.id === partId);
+                                        if (!part) return null;
+                                        
+                                        return (
+                                          <div key={partId} className="flex items-center gap-2 p-2 border rounded-md bg-background">
+                                            <div className="flex-1 min-w-0">
+                                              <p className="text-sm font-medium truncate">{part.name}</p>
+                                              <p className="text-xs text-muted-foreground">{part.category}</p>
+                                            </div>
+                                            <Button
+                                              type="button"
+                                              size="icon"
+                                              variant="ghost"
+                                              className="h-7 w-7 flex-shrink-0"
+                                              onClick={() => {
+                                                const currentParts = vehicleForm.getValues("selectedParts") || [];
+                                                vehicleForm.setValue("selectedParts", currentParts.filter(id => id !== partId));
+                                                removeWarrantyCard(partId);
+                                              }}
+                                              data-testid={`button-cart-remove-${partId}`}
+                                            >
+                                              ×
+                                            </Button>
+                                          </div>
+                                        );
+                                      })
+                                    ) : (
+                                      <div className="text-center py-8 text-muted-foreground">
+                                        <p className="text-sm">No parts selected</p>
+                                        <p className="text-xs mt-1">Add parts from the left</p>
+                                      </div>
+                                    )}
+                                  </div>
+                                </CardContent>
+                              </Card>
+                            </div>
                           </div>
                           <FormMessage />
                         </FormItem>
