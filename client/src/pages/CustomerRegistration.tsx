@@ -1130,7 +1130,6 @@ export default function CustomerRegistration() {
                                   {brand}
                                 </SelectItem>
                               ))}
-                              <SelectItem value="Other">Other</SelectItem>
                             </SelectContent>
                           </Select>
                           <FormMessage />
@@ -1365,7 +1364,7 @@ export default function CustomerRegistration() {
                   )}
 
                   <Card className="border-2 border-emerald-200 bg-emerald-50 dark:border-emerald-800 dark:bg-emerald-950/50 hover-elevate">
-                    <CardHeader className="pb-3">
+                    <CardHeader className="pb-4">
                       <div className="flex items-center gap-2">
                         <UploadCloud className="w-5 h-5 text-emerald-600 dark:text-emerald-400" />
                         <CardTitle className="text-lg text-emerald-900 dark:text-emerald-100">Upload Vehicle Photo</CardTitle>
@@ -1374,7 +1373,7 @@ export default function CustomerRegistration() {
                         Please upload a clear photo of your vehicle for our records
                       </CardDescription>
                     </CardHeader>
-                    <CardContent className="pb-6">
+                    <CardContent className="pb-8">
                       <FormField
                         control={vehicleForm.control}
                         name="vehiclePhoto"
@@ -1431,7 +1430,7 @@ export default function CustomerRegistration() {
                     <Button 
                       type="submit" 
                       size="lg"
-                      className="w-full" 
+                      className="w-full text-lg" 
                       disabled={registerVehicle.isPending}
                       data-testid="button-submit-vehicle"
                     >
