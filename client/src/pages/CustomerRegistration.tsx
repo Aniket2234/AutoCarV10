@@ -857,9 +857,9 @@ export default function CustomerRegistration() {
                       name="alternativeNumber"
                       render={({ field }) => (
                         <FormItem>
-                          <FormLabel>Alternative Number</FormLabel>
+                          <FormLabel>Alternative Number (Optional)</FormLabel>
                           <FormControl>
-                            <Input {...field} placeholder="Optional" data-testid="input-alt-mobile" />
+                            <Input {...field} placeholder="10-digit mobile number (Optional)" data-testid="input-alt-mobile" />
                           </FormControl>
                           <FormMessage />
                         </FormItem>

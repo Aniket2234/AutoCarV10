@@ -1297,9 +1297,9 @@ export default function CustomerRegistrationDashboard() {
                   name="alternativeNumber"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel>Alternative Number</FormLabel>
+                      <FormLabel>Alternative Number (Optional)</FormLabel>
                       <FormControl>
-                        <Input {...field} data-testid="input-edit-alternativeNumber" />
+                        <Input {...field} placeholder="10-digit mobile number (Optional)" data-testid="input-edit-alternativeNumber" />
                       </FormControl>
                       <FormMessage />
                     </FormItem>
