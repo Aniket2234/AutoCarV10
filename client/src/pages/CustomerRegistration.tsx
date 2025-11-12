@@ -398,7 +398,7 @@ export default function CustomerRegistration() {
       // Reset vehicle form for next vehicle
       vehicleForm.reset({
         vehicleNumber: "",
-        vehicleBrand: "",
+        vehicleBrand: "Other",
         customBrand: "",
         vehicleModel: "Other",
         customModel: "",
@@ -412,9 +412,9 @@ export default function CustomerRegistration() {
         selectedParts: [],
         warrantyCards: [],
       });
-      setSelectedBrand("");
-      setSelectedModel("");
-      setAvailableModels([]);
+      setSelectedBrand("Other");
+      setSelectedModel("Other");
+      setAvailableModels(getModelsByBrand("Other").map(m => m.name));
       setAvailableParts([]);
     },
     onError: (error: any) => {
