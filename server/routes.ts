@@ -63,6 +63,37 @@ function normalizeSelectedParts(selectedParts: any): Array<{ partId: string; qua
     .filter((part): part is { partId: string; quantity: number } => part !== null);
 }
 
+// Helper function to build consistent product response with proper field mappings
+function buildProductResponse(product: any) {
+  // Handle both new (productName) and old (name) field structures
+  const productName = product.productName || product.name;
+  
+  // Use existing category if available, otherwise derive from brand and model
+  const displayCategory = product.category || 
+    (product.model ? `${product.brand} - ${product.model}` : product.brand || 'Custom');
+  
+  return {
+    _id: product._id, // Keep original _id for backward compatibility
+    id: product._id?.toString() || product.id,
+    productName: productName,
+    name: productName, // For backward compatibility
+    category: displayCategory, // Use existing or derive from brand and model
+    brand: product.brand,
+    model: product.model,
+    price: product.sellingPrice || product.price,
+    sellingPrice: product.sellingPrice || product.price,
+    mrp: product.mrp,
+    warranty: product.warranty,
+    stockQty: product.stockQty,
+    barcode: product.barcode,
+    barcodeImage: product.barcodeImage,
+    modelCompatibility: product.modelCompatibility,
+    status: product.status,
+    images: product.images,
+    variants: product.variants,
+  };
+}
+
 export async function registerRoutes(app: Express): Promise<Server> {
   await connectDB();
   
@@ -624,8 +655,8 @@ export async function registerRoutes(app: Express): Promise<Server> {
         action: 'create',
         resource: 'product',
         resourceId: product._id.toString(),
-        description: `Created product: ${product.name}`,
-        details: { category: product.category, brand: product.brand },
+        description: `Created product: ${product.productName || product.name || 'Unknown Product'}`,
+        details: { brand: product.brand, model: product.model },
         ipAddress: req.ip,
       });
       
@@ -649,7 +680,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
         action: 'update',
         resource: 'product',
         resourceId: product._id.toString(),
-        description: `Updated product: ${product.name}`,
+        description: `Updated product: ${product.productName || product.name || 'Unknown Product'}`,
         details: req.body,
         ipAddress: req.ip,
       });
@@ -674,7 +705,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
         action: 'delete',
         resource: 'product',
         resourceId: product._id.toString(),
-        description: `Deleted product: ${product.name}`,
+        description: `Deleted product: ${product.productName || product.name || 'Unknown Product'}`,
         ipAddress: req.ip,
       });
       
@@ -689,7 +720,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
       const duplicates = await Product.aggregate([
         {
           $group: {
-            _id: { name: "$name", brand: "$brand", category: "$category" },
+            _id: { productName: "$productName", brand: "$brand", model: "$model" },
             ids: { $push: "$_id" },
             count: { $sum: 1 }
           }
@@ -744,8 +775,8 @@ export async function registerRoutes(app: Express): Promise<Server> {
           if (dbProduct) {
             productData = {
               id: productId,
-              name: dbProduct.name,
-              category: dbProduct.category,
+              name: dbProduct.productName || dbProduct.name || 'Unknown Product',
+              category: dbProduct.brand || dbProduct.category || 'Custom',
               brand: dbProduct.brand,
               price: dbProduct.sellingPrice,
               warranty: dbProduct.warranty,
@@ -1326,16 +1357,19 @@ export async function registerRoutes(app: Express): Promise<Server> {
           // Fetch all products explicitly to ensure we have complete data
           const products = await Product.find({ _id: { $in: productIds } });
           
-          console.log('✅ Found products from partsUsed:', products.map(p => ({ id: p._id, name: p.name, price: p.sellingPrice })));
+          console.log('✅ Found products from partsUsed:', products.map(p => ({ id: p._id, name: p.productName, price: p.sellingPrice })));
           
-          const suggestedProducts = products.map(product => ({
-            productId: product._id.toString(),
-            name: product.name,
-            price: product.sellingPrice,
-            warranty: product.warranty,
-            category: product.category,
-            stockQty: product.stockQty
-          }));
+          const suggestedProducts = products.map(product => {
+            const transformed = buildProductResponse(product);
+            return {
+              productId: transformed.id,
+              name: transformed.name,
+              price: transformed.price,
+              warranty: transformed.warranty,
+              category: transformed.category,
+              stockQty: transformed.stockQty
+            };
+          });
           
           console.log('🎯 Returning', suggestedProducts.length, 'products from partsUsed');
           console.log('========================================\n');
@@ -1443,20 +1477,21 @@ export async function registerRoutes(app: Express): Promise<Server> {
       ];
 
       console.log('✅ Found', products.length, 'products with exact name matches');
-      console.log('Matched products:', products.map(p => p.name));
+      const transformedProducts = products.map(buildProductResponse);
+      console.log('Matched products:', transformedProducts.map(p => p.name));
 
       console.log('\n✅ Final Product Search Results:');
-      console.log('  Total products found:', products.length);
-      console.log('  Product details:', products.map(p => ({ 
+      console.log('  Total products found:', transformedProducts.length);
+      console.log('  Product details:', transformedProducts.map(p => ({ 
         name: p.name, 
         category: p.category, 
         price: p.sellingPrice 
       })));
 
-      const suggestedProducts = products.map(product => ({
-        productId: product._id.toString(),
+      const suggestedProducts = transformedProducts.map(product => ({
+        productId: product.id,
         name: product.name,
-        price: product.sellingPrice,
+        price: product.price,
         warranty: product.warranty,
         category: product.category,
         stockQty: product.stockQty

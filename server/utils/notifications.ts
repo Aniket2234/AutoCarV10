@@ -27,8 +27,9 @@ export async function createNotification(params: CreateNotificationParams) {
 
 export async function checkAndNotifyLowStock(product: any) {
   if (product.stockQty <= product.minStockLevel) {
+    const productName = product.productName || product.name || 'Unknown Product';
     await createNotification({
-      message: `Low stock alert: ${product.name} (${product.stockQty} units remaining)`,
+      message: `Low stock alert: ${productName} (${product.stockQty} units remaining)`,
       type: 'low_stock',
       targetRole: 'Inventory Manager',
       relatedId: product._id,

@@ -286,8 +286,8 @@ export default function CustomerRegistration() {
       // Transform compatible products to match the part format
       const productParts = compatibleProducts.map((product: any) => ({
         id: `product-${product._id}`,
-        name: product.name,
-        category: product.category,
+        name: product.productName || product.name || 'Unknown Product',
+        category: product.category || product.brand || 'Custom',
         isProduct: true,
         productId: product._id,
         price: product.sellingPrice,
