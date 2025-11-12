@@ -1373,19 +1373,19 @@ export default function CustomerRegistration() {
                         Please upload a clear photo of your vehicle for our records
                       </CardDescription>
                     </CardHeader>
-                    <CardContent className="pb-8">
+                    <CardContent className="pb-10">
                       <FormField
                         control={vehicleForm.control}
                         name="vehiclePhoto"
                         render={({ field }) => (
                           <FormItem>
                             <FormControl>
-                              <div className="w-full">
+                              <div className="w-full py-1">
                                 <Input 
                                   type="file" 
                                   accept="image/*"
                                   onChange={handlePhotoUpload}
-                                  className="w-full cursor-pointer file:mr-2 file:py-2 file:px-3 file:rounded-md file:border-0 file:text-sm file:font-semibold file:bg-emerald-600 file:text-white hover:file:bg-emerald-700 dark:file:bg-emerald-700 dark:hover:file:bg-emerald-600"
+                                  className="w-full cursor-pointer file:mr-2 file:py-2 file:px-3 file:rounded-md file:border-0 file:text-sm file:font-semibold file:bg-emerald-600 file:text-white hover:file:bg-emerald-700 dark:file:bg-emerald-700 dark:hover:file:bg-emerald-600 h-auto min-h-[2.75rem]"
                                   data-testid="input-vehicle-photo"
                                 />
                               </div>
