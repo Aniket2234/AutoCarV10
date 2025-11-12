@@ -11,7 +11,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Checkbox } from "@/components/ui/checkbox";
 import { useToast } from "@/hooks/use-toast";
 import { apiRequest, queryClient } from "@/lib/queryClient";
-import { CheckCircle2, Car, User, MapPin } from "lucide-react";
+import { CheckCircle2, Car, User, MapPin, UploadCloud, PlusCircle } from "lucide-react";
 import { getAllBrandNames, getModelsByBrand, getPartsByBrandAndModel } from "@shared/vehicleData";
 import { ScreenshotProtection } from "@/components/ScreenshotProtection";
 
@@ -172,10 +172,10 @@ export default function CustomerRegistration() {
     defaultValues: {
       vehicleNumber: "",
       vehicleBrand: "",
-      vehicleModel: "",
+      vehicleModel: "Other",
       customModel: "",
       variant: undefined,
-      color: "",
+      color: "Others",
       customColor: "",
       yearOfPurchase: "",
       vehiclePhoto: "",
@@ -386,10 +386,11 @@ export default function CustomerRegistration() {
       vehicleForm.reset({
         vehicleNumber: "",
         vehicleBrand: "",
-        vehicleModel: "",
+        vehicleModel: "Other",
         customModel: "",
         variant: undefined,
-        color: "",
+        color: "Others",
+        customColor: "",
         yearOfPurchase: "",
         vehiclePhoto: "",
         isNewVehicle: "",
@@ -1099,9 +1100,9 @@ export default function CustomerRegistration() {
                               setSelectedBrand(value);
                               const models = getModelsByBrand(value);
                               setAvailableModels(models.map(m => m.name));
-                              vehicleForm.setValue("vehicleModel", "");
+                              vehicleForm.setValue("vehicleModel", "Other");
                               vehicleForm.setValue("selectedParts", []);
-                              setSelectedModel("");
+                              setSelectedModel("Other");
                               setAvailableParts([]);
                             }} 
                             defaultValue={field.value}
@@ -1334,24 +1335,37 @@ export default function CustomerRegistration() {
                     />
                   )}
 
-                  <FormField
-                    control={vehicleForm.control}
-                    name="vehiclePhoto"
-                    render={({ field }) => (
-                      <FormItem>
-                        <FormLabel>Vehicle Photo *</FormLabel>
-                        <FormControl>
-                          <Input 
-                            type="file" 
-                            accept="image/*"
-                            onChange={handlePhotoUpload}
-                            data-testid="input-vehicle-photo"
-                          />
-                        </FormControl>
-                        <FormMessage />
-                      </FormItem>
-                    )}
-                  />
+                  <Card className="border-2 border-emerald-200 bg-emerald-50 dark:border-emerald-800 dark:bg-emerald-950/50 hover-elevate">
+                    <CardHeader className="pb-3">
+                      <div className="flex items-center gap-2">
+                        <UploadCloud className="w-5 h-5 text-emerald-600 dark:text-emerald-400" />
+                        <CardTitle className="text-lg text-emerald-900 dark:text-emerald-100">Upload Vehicle Photo</CardTitle>
+                      </div>
+                      <CardDescription className="text-emerald-700 dark:text-emerald-300">
+                        Please upload a clear photo of your vehicle for our records
+                      </CardDescription>
+                    </CardHeader>
+                    <CardContent>
+                      <FormField
+                        control={vehicleForm.control}
+                        name="vehiclePhoto"
+                        render={({ field }) => (
+                          <FormItem>
+                            <FormControl>
+                              <Input 
+                                type="file" 
+                                accept="image/*"
+                                onChange={handlePhotoUpload}
+                                className="cursor-pointer file:mr-4 file:py-2 file:px-4 file:rounded-md file:border-0 file:text-sm file:font-semibold file:bg-emerald-600 file:text-white hover:file:bg-emerald-700 dark:file:bg-emerald-700 dark:hover:file:bg-emerald-600"
+                                data-testid="input-vehicle-photo"
+                              />
+                            </FormControl>
+                            <FormMessage />
+                          </FormItem>
+                        )}
+                      />
+                    </CardContent>
+                  </Card>
 
                   {vehicleForm.watch("warrantyCards")?.length > 0 && (
                     <div className="border rounded-lg p-4 bg-muted/20">
@@ -1385,10 +1399,12 @@ export default function CustomerRegistration() {
                   <div className="space-y-3">
                     <Button 
                       type="submit" 
+                      size="lg"
                       className="w-full" 
                       disabled={registerVehicle.isPending}
                       data-testid="button-submit-vehicle"
                     >
+                      <PlusCircle className="w-5 h-5 mr-2" />
                       {registerVehicle.isPending ? "Adding Vehicle..." : registeredVehicles.length > 0 ? "Add Another Vehicle" : "Add Vehicle"}
                     </Button>
                     {registeredVehicles.length > 0 && (
