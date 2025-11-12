@@ -1315,7 +1315,7 @@ export default function CustomerRegistration() {
                               Select parts needed for this vehicle
                             </p>
                           </div>
-                          <div className="grid grid-cols-1 gap-3 max-h-96 overflow-y-auto border rounded-lg p-4">
+                          <div className="grid grid-cols-2 md:grid-cols-3 gap-2 max-h-96 overflow-y-auto border rounded-lg p-4">
                             {availableParts.map((part) => (
                               <FormField
                                 key={part.id}
@@ -1327,32 +1327,25 @@ export default function CustomerRegistration() {
                                   return (
                                     <FormItem
                                       key={part.id}
-                                      className="flex flex-col space-y-2 p-3 border rounded-md bg-muted/30"
+                                      className="flex items-center space-x-2 p-2 border rounded-md bg-muted/30"
                                     >
-                                      <div className="flex items-start space-x-3">
-                                        <FormControl>
-                                          <Checkbox
-                                            checked={isSelected}
-                                            onCheckedChange={(checked) => {
-                                              if (checked) {
-                                                field.onChange([...field.value, part.id]);
-                                              } else {
-                                                field.onChange(field.value?.filter((value) => value !== part.id));
-                                                removeWarrantyCard(part.id);
-                                              }
-                                            }}
-                                            data-testid={`checkbox-part-${part.id}`}
-                                          />
-                                        </FormControl>
-                                        <div className="flex-1">
-                                          <FormLabel className="text-sm font-normal cursor-pointer">
-                                            {part.name}
-                                            <span className="text-xs text-gray-500 dark:text-gray-400 block">
-                                              {part.category}
-                                            </span>
-                                          </FormLabel>
-                                        </div>
-                                      </div>
+                                      <FormControl>
+                                        <Checkbox
+                                          checked={isSelected}
+                                          onCheckedChange={(checked) => {
+                                            if (checked) {
+                                              field.onChange([...field.value, part.id]);
+                                            } else {
+                                              field.onChange(field.value?.filter((value) => value !== part.id));
+                                              removeWarrantyCard(part.id);
+                                            }
+                                          }}
+                                          data-testid={`checkbox-part-${part.id}`}
+                                        />
+                                      </FormControl>
+                                      <FormLabel className="text-xs font-normal cursor-pointer flex-1 leading-tight">
+                                        {part.name}
+                                      </FormLabel>
                                     </FormItem>
                                   );
                                 }}
