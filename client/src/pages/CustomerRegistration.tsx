@@ -1361,8 +1361,8 @@ export default function CustomerRegistration() {
                           <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
                             {/* Products Grid - Left Side */}
                             <div className="lg:col-span-2">
-                              {/* Search Bar */}
-                              <div className="mb-3">
+                              {/* Search Bar and Toggle */}
+                              <div className="mb-3 space-y-2">
                                 <div className="relative">
                                   <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-muted-foreground" />
                                   <Input
@@ -1374,11 +1374,32 @@ export default function CustomerRegistration() {
                                     data-testid="input-search-parts"
                                   />
                                 </div>
+                                <Button
+                                  type="button"
+                                  variant="outline"
+                                  size="sm"
+                                  onClick={() => setIsProductListExpanded(!isProductListExpanded)}
+                                  className="w-full gap-2"
+                                  data-testid="button-toggle-product-list"
+                                >
+                                  {isProductListExpanded ? (
+                                    <>
+                                      <ChevronUp className="w-4 h-4" />
+                                      Hide All Products
+                                    </>
+                                  ) : (
+                                    <>
+                                      <ChevronDown className="w-4 h-4" />
+                                      Show All Products
+                                    </>
+                                  )}
+                                </Button>
                               </div>
                               <div className="grid grid-cols-2 gap-2 max-h-[500px] overflow-y-auto border rounded-lg p-3 bg-muted/20">
                                 {availableParts
                                   .filter((part) => {
-                                    if (!partSearchTerm) return true;
+                                    if (isProductListExpanded) return true;
+                                    if (!partSearchTerm) return false;
                                     const searchLower = partSearchTerm.toLowerCase();
                                     return (
                                       part.name.toLowerCase().includes(searchLower) ||
