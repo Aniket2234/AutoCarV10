@@ -714,11 +714,6 @@ export default function CustomerRegistration() {
     const currentWarrantyCards = vehicleForm.getValues("warrantyCards") || [];
     const updatedCards = currentWarrantyCards.filter(wc => wc.partId !== partId);
     vehicleForm.setValue("warrantyCards", updatedCards);
-    
-    toast({
-      title: "Warranty Card Removed",
-      description: "The warranty card has been removed.",
-    });
   };
 
   // Step configuration for progress bar
